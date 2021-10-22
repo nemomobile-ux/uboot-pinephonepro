@@ -2,10 +2,10 @@
 # Contributor: Furkan Kardame <furkan@fkardame.com>
 
 pkgname=uboot-pinephonepro
-pkgver=2021.01
+pkgver=2021.10
 pkgrel=1
 _srcname=u-boot-pine64-pinephonepro
-_commit="5fbafb8bc4cedb6d7aaefc525daa6145ea648528"
+_commit="d1f4151f02153df16ec26e56f8be338cae72be13"
 _tfaver=2.5
 pkgdesc="U-Boot for Pinephone Pro"
 arch=('aarch64')
@@ -17,7 +17,7 @@ conflicts=('uboot')
 install=${pkgname}.install
 source=("$_srcname-$_commit.tar.gz::https://git.sr.ht/~martijnbraam/u-boot/archive/$_commit.tar.gz"
         "https://git.trustedfirmware.org/TF-A/trusted-firmware-a.git/snapshot/trusted-firmware-a-$_tfaver.tar.gz")
-sha256sums=('f4c62337e7f1f56365e9532402a17f14b500a49981a1ff839190e9ba3846e70d'
+sha256sums=('1858fd6dd4d7f44a43f3945ef7a2751b59ef1d94c8696b3523f566ec3fe037da'
             'ad8a2ffcbcd12d919723da07630fc0840c3c2fba7656d1462e45488e42995d7c')
 
 #prepare() {
