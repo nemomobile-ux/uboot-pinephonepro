@@ -2,10 +2,11 @@
 # Contributor: Furkan Kardame <furkan@fkardame.com>
 
 pkgname=uboot-pinephonepro
-pkgver=2021.10
+pkgver=2021.01rc3
 pkgrel=1
+epoch=1
 _srcname=u-boot-pine64-pinephonepro
-_commit="d1f4151f02153df16ec26e56f8be338cae72be13"
+_commit="19150d65b1bed6831ba92a4cf3e7262518f1049f"
 _tfaver=2.5
 pkgdesc="U-Boot for Pinephone Pro"
 arch=('aarch64')
@@ -41,7 +42,6 @@ build() {
   echo 'CONFIG_USB_XHCI_DWC3=n' >> .config
   echo 'CONFIG_USB_DWC3=n' >> .config
   echo 'CONFIG_USB_DWC3_GENERIC=n' >> .config
-
 
   make EXTRAVERSION=-${pkgrel}
 }
