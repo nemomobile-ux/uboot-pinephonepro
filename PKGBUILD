@@ -18,7 +18,7 @@ conflicts=('uboot')
 install=${pkgname}.install
 source=("$_srcname-$_commit.tar.gz::https://git.sr.ht/~martijnbraam/u-boot/archive/$_commit.tar.gz"
         "https://git.trustedfirmware.org/TF-A/trusted-firmware-a.git/snapshot/trusted-firmware-a-$_tfaver.tar.gz")
-sha256sums=('1858fd6dd4d7f44a43f3945ef7a2751b59ef1d94c8696b3523f566ec3fe037da'
+sha256sums=('9057276687b257d0a5040f7a0a45945d52646ff24307e788418233a51ebb5af8'
             'ad8a2ffcbcd12d919723da07630fc0840c3c2fba7656d1462e45488e42995d7c')
 
 #prepare() {
