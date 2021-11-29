@@ -1,0 +1,38 @@
+From 5fbafb8bc4cedb6d7aaefc525daa6145ea648528 Mon Sep 17 00:00:00 2001
+From: Martijn Braam <martijn@brixit.nl>
+Date: Fri, 18 Dec 2020 23:07:00 +0100
+Subject: [PATCH 8/8] Changed baudrate to 9600
+
+---
+ arch/arm/dts/rk3399-pinephone-pro.dts  | 2 +-
+ configs/pinephone-pro-rk3399_defconfig | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/arch/arm/dts/rk3399-pinephone-pro.dts b/arch/arm/dts/rk3399-pinephone-pro.dts
+index 78d4760c8e..91ada1f3f3 100644
+--- a/arch/arm/dts/rk3399-pinephone-pro.dts
++++ b/arch/arm/dts/rk3399-pinephone-pro.dts
+@@ -12,7 +12,7 @@
+ 	compatible = "pine64,pinephonepro", "rockchip,rk3399";
+ 
+ 	chosen {
+-		stdout-path = "serial2:1500000n8";
++		stdout-path = "serial2:9600n8";
+ 	};
+ 
+ 	sdio_pwrseq: sdio-pwrseq {
+diff --git a/configs/pinephone-pro-rk3399_defconfig b/configs/pinephone-pro-rk3399_defconfig
+index 1c2e7f278d..a006d47697 100644
+--- a/configs/pinephone-pro-rk3399_defconfig
++++ b/configs/pinephone-pro-rk3399_defconfig
+@@ -64,7 +64,7 @@ CONFIG_RAM_RK3399_LPDDR4=y
+ CONFIG_DM_RESET=y
+ CONFIG_DM_RNG=y
+ CONFIG_RNG_ROCKCHIP=y
+-CONFIG_BAUDRATE=1500000
++CONFIG_BAUDRATE=9600
+ CONFIG_DEBUG_UART_SHIFT=2
+ CONFIG_ROCKCHIP_SPI=y
+ CONFIG_SYSRESET=y
+-- 
+2.33.0
