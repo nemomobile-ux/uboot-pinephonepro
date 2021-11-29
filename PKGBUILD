@@ -2,11 +2,11 @@
 # Contributor: Furkan Kardame <furkan@fkardame.com>
 
 pkgname=uboot-pinephonepro
-pkgver=2021.10
-pkgrel=1
+pkgver=2021.01rc3
+pkgrel=3
 epoch=1
 _srcname=u-boot-pine64-pinephonepro
-_commit=d80bb749fab53da72c4a0e09b8c2d2aaa3103c91
+_commit=0719bf42931033c3109ecc6357e8adb567cb637b
 _tfaver=2.6
 pkgdesc="U-Boot for Pinephone Pro"
 arch=('aarch64')
@@ -16,7 +16,7 @@ makedepends=('git' 'arm-none-eabi-gcc' 'dtc' 'bc')
 provides=('uboot')
 conflicts=('uboot')
 install=${pkgname}.install
-source=("u-boot-$_commit_uboot.tar.gz::https://source.denx.de/u-boot/u-boot/-/archive/${_commit}/u-boot-${_commit}.tar.gz"
+source=("u-boot-$_commit.tar.gz::https://source.denx.de/u-boot/u-boot/-/archive/${_commit}/u-boot-${_commit}.tar.gz"
         "https://git.trustedfirmware.org/TF-A/trusted-firmware-a.git/snapshot/trusted-firmware-a-$_tfaver.tar.gz"
         0001-PPP.patch
         0002-Add-ppp-dt.patch
@@ -26,7 +26,7 @@ source=("u-boot-$_commit_uboot.tar.gz::https://source.denx.de/u-boot/u-boot/-/ar
         0006-Added-dts-to-makefile.patch
         0007-u-boot.dtsi-fixes.patch
         0008-Changed-baudrate-to-9600.patch)
-sha256sums=('b4cb9fe9a9e51e973fba63b80b23012ebe9eb853daee7f2761b5bcd4fb718ff1'
+sha256sums=('6b196b6592fabed060b7c5b1fa05a743f9be131d11389b762b7d0e2beebbd381'
             '4e59f02ccb042d5d18c89c849701b96e6cf4b788709564405354b5d313d173f7'
             'f2e9d4efd24b7a6d94ccfe8c1a6fd0fac04776483be7a2d343f5b7a6b50a8ff2'
             'c889eb1b55868a3d007be6f5c618823faca70905ce4a4047cd98bdcbfb48d6ab'
