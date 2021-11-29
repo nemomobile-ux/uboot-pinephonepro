@@ -38,7 +38,7 @@ sha256sums=('b4cb9fe9a9e51e973fba63b80b23012ebe9eb853daee7f2761b5bcd4fb718ff1'
             'd4326b64bbcda8a37ccbf36a1869a613589a2fdc16c5d315bfa3cccc1bfcbcb5')
 
 prepare() {
-  cd ../u-boot-${_commit}
+  cd u-boot-${_commit}
   patch -N -p1 < ${srcdir}/0001-PPP.patch
   patch -N -p1 < ${srcdir}/0002-Add-ppp-dt.patch
   patch -N -p1 < ${srcdir}/0003-Config-changes.patch
