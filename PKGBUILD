@@ -3,7 +3,7 @@
 
 pkgname=uboot-pinephonepro
 pkgver=2021.01rc3
-pkgrel=4
+pkgrel=5
 epoch=1
 _srcname=u-boot-pine64-pinephonepro
 _commit=0719bf42931033c3109ecc6357e8adb567cb637b
@@ -66,6 +66,7 @@ build() {
   echo 'CONFIG_USB_XHCI_DWC3=n' >> .config
   echo 'CONFIG_USB_DWC3=n' >> .config
   echo 'CONFIG_USB_DWC3_GENERIC=n' >> .config
+  echo 'CONFIG_BOOTDELAY=0' >> .config
 
   make EXTRAVERSION=-${pkgrel}
 }
