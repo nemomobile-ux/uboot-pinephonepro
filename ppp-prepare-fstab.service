@@ -1,0 +1,12 @@
+[Unit]
+Description=Prepare Partition Mounts
+Before=local-fs.target
+
+[Service]
+Type=oneshot
+RemainAfterExit=true
+ExecStart=/usr/bin/ppp-prepare-fstab
+ExecStartPost=/usr/bin/systemctl disable ppp-prepare-fstab.service
+
+[Install]
+WantedBy=local-fs.target

@@ -1,0 +1,46 @@
+#!/bin/bash
+
+#
+# /usr/bin/ppp-prepare-fstab
+# This script will be executed automatically on boot, and only once.
+#
+
+FSTAB="/etc/fstab"
+
+kernel_cmdline() {
+  for param in $(cat /proc/cmdline); do
+    case "${param}" in
+      $1=*) echo "${param##*=}"; return 0 ;;
+      $1) return 0 ;;
+      *) continue ;;
+    esac
+  done
+
+  [ -n "${2}" ] && echo "${2}"
+  return 1
+}
+
+PART_BOOT=$(kernel_cmdline boot)
+PART_ROOT=$(kernel_cmdline root)
+
+if [[ -z ${PART_BOOT} ]]; then
+  echo "Failed to determine boot partition, no changes made to ${FSTAB}."
+  exit 1
+fi
+
+if [[ -z ${PART_ROOT} ]]; then
+  echo "Failed to determine root partition, no changes made to ${FSTAB}."
+  exit 1
+fi
+
+sed -i -e '/[ \t]\+\/boot[ \t]\+/d' ${FSTAB}
+sed -i -e '/[ \t]\+\/[ \t]\+/d' ${FSTAB}
+
+echo "PARTUUID=${PART_BOOT}   /boot   vfat    defaults,noexec,nodev,showexec    0   0" >> ${FSTAB}
+echo "PARTUUID=${PART_ROOT}   /       auto    defaults                          0   0" >> ${FSTAB}
+
+echo "Configured ${FSTAB} to use ${PART_BOOT} and ${PART_ROOT} as boot and root partitions, respectively."
+
+mount -a
+
+# EOF

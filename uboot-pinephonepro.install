@@ -1,39 +1,37 @@
-notice_uboot() {
-  echo "New version of U-Boot firmware can be flashed to your microSD card"
-  echo "or eMMC module.  You can do that by running:"
-  echo "# dd if=/boot/idbloader.img of=/dev/mmcblkX seek=64 conv=notrunc,fsync"
-  echo "# dd if=/boot/u-boot.itb of=/dev/mmcblkX seek=16384 conv=notrunc,fsync"
-}
-
-create_config() {
-  mkdir -p /boot/extlinux
-  echo "LABEL Manjaro ARM
-KERNEL /Image
-FDT /dtbs/rockchip/rk3399-pinephone-pro.dtb
-APPEND initrd=/initramfs-linux.img console=ttyS2,1500000 root=LABEL=ROOT_MNJRO rw rootwait quiet splash plymouth.ignore-serial-consoles" > /boot/extlinux/extlinux.conf
+flash_uboot() {
+  # (Re-)generate the U-Boot boot script and flash the U-Boot image
+  ppp-uboot-mkscr -q
+  ppp-uboot-flash
 }
 
 post_install() {
-  notice_uboot
-  if [ -f /boot/extlinux/extlinux.conf.pacsave ]; then
-    mv /boot/extlinux/extlinux.conf.pacsave /boot/extlinux/extlinux.conf
-  fi
-  if [ -f /boot/extlinux/extlinux.conf ]; then
-    echo "Keeping old extlinux.conf file..."
-  else
-    create_config
-  fi
+  # Perform the U-Boot flashing
+  flash_uboot
+
+  # The service will be executed only once, it disables itself
+  systemctl enable ppp-prepare-fstab.service
 }
 
 post_upgrade() {
-  notice_uboot
-  if [ -f /boot/extlinux/extlinux.conf.pacsave ]; then
-    mv /boot/extlinux/extlinux.conf.pacsave /boot/extlinux/extlinux.conf
-  fi
-  if [ -f /boot/extlinux/extlinux.conf ]; then
-    echo "Keeping old extlinux.conf file..."
-  else
-    create_config
-  fi
-}
+  EXTLINUX="/boot/extlinux"
+  BOOT_OPTIONS="defaults,noexec,nodev,showexec"
 
+  # Remove an obsolete directory, if it's present
+  if [[ -e ${EXTLINUX} ]]; then
+    echo -n "Removing obsolete ${EXTLINUX} directory..."
+    rm -rf ${EXTLINUX}
+    echo " done."
+  fi
+
+  # Ensure updated mount options for /boot, if using vfat
+  if grep -q "/boot.*vfat" /etc/fstab; then
+    if ! grep -q "/boot.*${BOOT_OPTIONS}" /etc/fstab; then
+      echo -n "Updating mount options for /boot in /etc/fstab..."
+      sed -i -e "s#\(/boot\)\([ \t]\+\)\([^ \t]\+\)\([ \t]\+\)\([^ \t]\+\)\(.*\)\$#\1\2\3\4${BOOT_OPTIONS}\6#g" /etc/fstab
+      echo " done."
+    fi
+  fi
+
+  # Perform the U-Boot flashing
+  flash_uboot
+}

@@ -1,23 +1,31 @@
 # U-Boot: Pinephone Pro based on PKGBUILD for RK3399
 # Contributor: Furkan Kardame <furkan@fkardame.com>
+# Contributor: Dan Johansen <strit@manjaro.org>
+# Contributor: Dragan Simic <dsimic@buserror.io>
 
 pkgname=uboot-pinephonepro
 pkgver=2021.01rc3
-pkgrel=5
+pkgrel=6
 epoch=1
 _srcname=u-boot-pine64-pinephonepro
 _commit=0719bf42931033c3109ecc6357e8adb567cb637b
 _tfaver=2.6
-pkgdesc="U-Boot for Pinephone Pro"
+pkgdesc="U-Boot for Pine64 PinePhone Pro"
 arch=('aarch64')
 url='https://git.sr.ht/~martijnbraam/u-boot'
 license=('GPL')
 makedepends=('git' 'arm-none-eabi-gcc' 'dtc' 'bc')
+depends=('uboot-tools')
 provides=('uboot')
 conflicts=('uboot')
 install=${pkgname}.install
 source=("u-boot-$_commit.tar.gz::https://source.denx.de/u-boot/u-boot/-/archive/${_commit}/u-boot-${_commit}.tar.gz"
         "https://git.trustedfirmware.org/TF-A/trusted-firmware-a.git/snapshot/trusted-firmware-a-$_tfaver.tar.gz"
+        "boot.txt"
+        "ppp-prepare-fstab"
+        "ppp-prepare-fstab.service"
+        "ppp-uboot-flash"
+        "ppp-uboot-mkscr"
         0001-PPP.patch
         0002-Add-ppp-dt.patch
         0003-Config-changes.patch
@@ -29,6 +37,11 @@ source=("u-boot-$_commit.tar.gz::https://source.denx.de/u-boot/u-boot/-/archive/
         0009-Correct-boot-order-to-be-USB-SD-eMMC.patch)
 sha256sums=('6b196b6592fabed060b7c5b1fa05a743f9be131d11389b762b7d0e2beebbd381'
             '4e59f02ccb042d5d18c89c849701b96e6cf4b788709564405354b5d313d173f7'
+            '4e356b3868c0c1ac061c2c15c7ba80c627e1743214680409f418f9b4c00eb3f7'
+            'de7e36cdc7ed2fb5abb9155c97f87926361aa5be87d794c9016776160f3430ec'
+            'e55fb02dfb6213eabbb899b468dc5f68d36a11c05feda4c14e80282415222fea'
+            '6265fb9d3bc84bf1217383b52587b1d5a36372d88a824932586a802a502f62ba'
+            '05eaccb2e8ea1eba3e86a4e7fcf12fd232195b5018c049ddf36e5a82a968cc24'
             'f2e9d4efd24b7a6d94ccfe8c1a6fd0fac04776483be7a2d343f5b7a6b50a8ff2'
             'c889eb1b55868a3d007be6f5c618823faca70905ce4a4047cd98bdcbfb48d6ab'
             '355444b20346bb5adbc531b1a8813483bb8e8e6a0b884139479dbf2ad342ef79'
@@ -52,21 +65,41 @@ prepare() {
 }
 
 build() {
-  cd trusted-firmware-a-$_tfaver
+  # Avoid build warnings by editing a .config option in place instead of
+  # appending an option to .config, if an option is already present
+  update_config() {
+    if ! grep -q "^$1=$2$" .config; then
+      if grep -q "^# $1 is not set$" .config; then
+        sed -i -e "s/^# $1 is not set$/$1=$2/g" .config
+      elif grep -q "^$1=" .config; then
+        sed -i -e "s/^$1=.*/$1=$2/g" .config
+      else
+        echo "$1=$2" >> .config
+      fi
+    fi
+  }
+
   unset CFLAGS CXXFLAGS CPPFLAGS LDFLAGS
+
+  cd trusted-firmware-a-$_tfaver
+
+  echo -e "\nBuilding TF-A for Pine64 PinePhone Pro...\n"
   make PLAT=rk3399
   cp build/rk3399/release/bl31/bl31.elf ../u-boot-${_commit}
+
   cd ../u-boot-${_commit}
-  unset CFLAGS CXXFLAGS CPPFLAGS LDFLAGS
+
+  echo -e "\nBuilding U-Boot for Pine64 PinePhone Pro...\n"
   make pinephone-pro-rk3399_defconfig
-  echo 'CONFIG_IDENT_STRING=" Manjaro ARM"' >> .config
-  echo 'CONFIG_USB_EHCI_HCD=n' >> .config
-  echo 'CONFIG_USB_EHCI_GENERIC=n' >> .config
-  echo 'CONFIG_USB_XHCI_HCD=n' >> .config
-  echo 'CONFIG_USB_XHCI_DWC3=n' >> .config
-  echo 'CONFIG_USB_DWC3=n' >> .config
-  echo 'CONFIG_USB_DWC3_GENERIC=n' >> .config
-  echo 'CONFIG_BOOTDELAY=0' >> .config
+
+  update_config 'CONFIG_IDENT_STRING' '" Manjaro Linux ARM"'
+  update_config 'CONFIG_BOOTDELAY' '0'
+  update_config 'CONFIG_USB_EHCI_HCD' 'n'
+  update_config 'CONFIG_USB_EHCI_GENERIC' 'n'
+  update_config 'CONFIG_USB_XHCI_HCD' 'n'
+  update_config 'CONFIG_USB_XHCI_DWC3' 'n'
+  update_config 'CONFIG_USB_DWC3' 'n'
+  update_config 'CONFIG_USB_DWC3_GENERIC' 'n'
 
   make EXTRAVERSION=-${pkgrel}
 }
@@ -74,7 +107,11 @@ build() {
 package() {
   cd u-boot-${_commit}
 
-  mkdir -p "${pkgdir}/boot/extlinux"
-  cp idbloader.img u-boot.itb  "${pkgdir}/boot/"
-}
+  install -D -m 0644 idbloader.img u-boot.itb -t "${pkgdir}/boot"
+  install -D -m 0644 "${srcdir}/boot.txt" -t "${pkgdir}/boot"
+  install -D -m 0755 "${srcdir}/ppp-uboot-mkscr" -t "${pkgdir}/usr/bin"
 
+  install -D -m 0755 "${srcdir}/ppp-prepare-fstab" -t "${pkgdir}/usr/bin"
+  install -D -m 0644 "${srcdir}/ppp-prepare-fstab.service" -t "${pkgdir}/usr/lib/systemd/system"
+  install -D -m 0755 "${srcdir}/ppp-uboot-flash" -t "${pkgdir}/usr/bin"
+}
