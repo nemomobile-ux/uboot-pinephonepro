@@ -52,7 +52,7 @@ sha256sums=('6b196b6592fabed060b7c5b1fa05a743f9be131d11389b762b7d0e2beebbd381'
             '3aa7c3b4aa1233d604cb9177fc9bc56f85714c5d69f9432690dc7c50e06c105b'
             '4aadc4f07f4ae62d5fe11cfabe1c5f917f77ce8014800ae3a107f9bcc551bc5b'
             '017d33aac55f8a5ed22170c97b4792ba755a4dad04f6c0cdd85119bbc81e87b3'
-            '4e9f25a2d1a87ff0bd4b1bcf95e84b3e80b6152373d29e126abec21c0dcb5b0a')
+            '983634eff9c283cd240ed6f737e9e58fe8467d9c113c362fee5cbd905fc61aef')
 
 prepare() {
   cd u-boot-${_commit}
