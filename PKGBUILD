@@ -5,7 +5,7 @@
 
 pkgname=uboot-pinephonepro
 pkgver=2021.01rc3
-pkgrel=6
+pkgrel=7
 epoch=1
 _srcname=u-boot-pine64-pinephonepro
 _commit=0719bf42931033c3109ecc6357e8adb567cb637b
@@ -26,15 +26,16 @@ source=("u-boot-$_commit.tar.gz::https://source.denx.de/u-boot/u-boot/-/archive/
         "ppp-prepare-fstab.service"
         "ppp-uboot-flash"
         "ppp-uboot-mkscr"
-        0001-PPP.patch
-        0002-Add-ppp-dt.patch
-        0003-Config-changes.patch
-        0004-Add-kconfig-include.patch
-        0005-Add-pinephone-pro-rk3399.h.patch
-        0006-Added-dts-to-makefile.patch
-        0007-u-boot.dtsi-fixes.patch
-        0008-fix-boot-order.patch
-        0009-Correct-boot-order-to-be-USB-SD-eMMC.patch)
+        "0001-PPP.patch"
+        "0002-Add-ppp-dt.patch"
+        "0003-Config-changes.patch"
+        "0004-Add-kconfig-include.patch"
+        "0005-Add-pinephone-pro-rk3399.h.patch"
+        "0006-Added-dts-to-makefile.patch"
+        "0007-u-boot.dtsi-fixes.patch"
+        "0008-fix-boot-order.patch"
+        "0009-Correct-boot-order-to-be-USB-SD-eMMC.patch"
+        "0010-Configure-USB-power-settings-for-PinePhone-Pro.patch")
 sha256sums=('6b196b6592fabed060b7c5b1fa05a743f9be131d11389b762b7d0e2beebbd381'
             '4e59f02ccb042d5d18c89c849701b96e6cf4b788709564405354b5d313d173f7'
             '4e356b3868c0c1ac061c2c15c7ba80c627e1743214680409f418f9b4c00eb3f7'
@@ -50,7 +51,8 @@ sha256sums=('6b196b6592fabed060b7c5b1fa05a743f9be131d11389b762b7d0e2beebbd381'
             '0e96af517f2f7a085412c659ab672e61912ff59d92f009ed119832c7c790d6d8'
             '3aa7c3b4aa1233d604cb9177fc9bc56f85714c5d69f9432690dc7c50e06c105b'
             '4aadc4f07f4ae62d5fe11cfabe1c5f917f77ce8014800ae3a107f9bcc551bc5b'
-            '017d33aac55f8a5ed22170c97b4792ba755a4dad04f6c0cdd85119bbc81e87b3')
+            '017d33aac55f8a5ed22170c97b4792ba755a4dad04f6c0cdd85119bbc81e87b3'
+            '4e9f25a2d1a87ff0bd4b1bcf95e84b3e80b6152373d29e126abec21c0dcb5b0a')
 
 prepare() {
   cd u-boot-${_commit}
