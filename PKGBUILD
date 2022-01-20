@@ -5,8 +5,8 @@
 
 pkgname=uboot-pinephonepro
 pkgver=2021.01rc3
-pkgrel=7
-epoch=1
+pkgrel=1
+epoch=3
 _srcname=u-boot-pine64-pinephonepro
 _commit=0719bf42931033c3109ecc6357e8adb567cb637b
 _tfaver=2.6
