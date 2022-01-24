@@ -7,7 +7,7 @@
 pkgname=uboot-pinephonepro
 pkgver=2022.01
 pkgrel=0
-epoch=3
+epoch=0
 _srcname=u-boot-pine64-pinephonepro
 _tfaver=2.6
 pkgdesc="U-Boot for Pine64 PinePhone Pro"
@@ -19,7 +19,7 @@ depends=('uboot-tools')
 provides=('uboot')
 conflicts=('uboot')
 install=${pkgname}.install
-source=("ftp://ftp.denx.de/pub/u-boot/u-boot-${pkgver/rc/-rc}.tar.bz2"
+source=("u-boot-v$pkgver.tar.gz::https://source.denx.de/u-boot/u-boot/-/archive/v$pkgver/u-boot-v$pkgver.tar.gz"
         "https://git.trustedfirmware.org/TF-A/trusted-firmware-a.git/snapshot/trusted-firmware-a-$_tfaver.tar.gz"
         "boot.txt"
         "ppp-prepare-fstab"
@@ -29,8 +29,9 @@ source=("ftp://ftp.denx.de/pub/u-boot/u-boot-${pkgver/rc/-rc}.tar.bz2"
         "0001-rockchip-Add-initial-support-for-the-PinePhone-Pro.patch"
         "0002-Correct-boot-order-to-be-USB-SD-eMMC.patch"
         "0003-Configure-USB-power-settings-for-PinePhone-Pro.patch"
-        "0004-rockchip-sdhci-Fix-reinit-and-add-HS400-Enhanced-Strobe-support.patch")
-sha256sums=('81b4543227db228c03f8a1bf5ddbc813b0bb8f6555ce46064ef721a6fc680413'
+        "0004-rockchip-sdhci-Fix-reinit-and-add-HS400-Enhanced-Strobe-support.patch"
+)
+sha256sums=('eb91cc5e9a27f035159f624069b08d958496c22d493d4af3047d0ce5ba3940ea'
             '4e59f02ccb042d5d18c89c849701b96e6cf4b788709564405354b5d313d173f7'
             '4e356b3868c0c1ac061c2c15c7ba80c627e1743214680409f418f9b4c00eb3f7'
             'de7e36cdc7ed2fb5abb9155c97f87926361aa5be87d794c9016776160f3430ec'
@@ -43,7 +44,7 @@ sha256sums=('81b4543227db228c03f8a1bf5ddbc813b0bb8f6555ce46064ef721a6fc680413'
             'eceafbaca3fc92e406bd5ff5e3cdf7f46b9be2426f94ce38eb5e5ce07f43f3b4')
 
 prepare() {
-  cd u-boot-${pkgver/rc/-rc}
+  cd u-boot-v$pkgver
   local src
   for src in "${source[@]}"; do
       src="${src%%::*}"
@@ -75,27 +76,19 @@ build() {
 
   echo -e "\nBuilding TF-A for Pine64 PinePhone Pro...\n"
   make PLAT=rk3399
-  cp build/rk3399/release/bl31/bl31.elf ../u-boot-${_commit}
+  cp build/rk3399/release/bl31/bl31.elf ../u-boot-v$pkgver
 
-  cd ../u-boot-${pkgver/rc/-rc}
+  cd ../u-boot-v$pkgver
 
   echo -e "\nBuilding U-Boot for Pine64 PinePhone Pro...\n"
   make pinephone-pro-rk3399_defconfig
 
   update_config 'CONFIG_IDENT_STRING' '" Manjaro Linux ARM"'
-  update_config 'CONFIG_BOOTDELAY' '0'
-  update_config 'CONFIG_USB_EHCI_HCD' 'n'
-  update_config 'CONFIG_USB_EHCI_GENERIC' 'n'
-  update_config 'CONFIG_USB_XHCI_HCD' 'n'
-  update_config 'CONFIG_USB_XHCI_DWC3' 'n'
-  update_config 'CONFIG_USB_DWC3' 'n'
-  update_config 'CONFIG_USB_DWC3_GENERIC' 'n'
-
   make EXTRAVERSION=-${pkgrel}
 }
 
 package() {
-  cd u-boot-${pkgver/rc/-rc}
+  cd u-boot-v$pkgver
 
   install -D -m 0644 idbloader.img u-boot.itb -t "${pkgdir}/boot"
   install -D -m 0644 "${srcdir}/boot.txt" -t "${pkgdir}/boot"
